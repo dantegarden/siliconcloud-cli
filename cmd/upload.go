@@ -1,0 +1,241 @@
+package cmd
+
+import (
+	"crypto/md5"
+	"crypto/sha256"
+	"encoding/base64"
+	"encoding/hex"
+	"fmt"
+	"github.com/cloudwego/hertz/cmd/hz/util"
+	"github.com/cloudwego/hertz/cmd/hz/util/logs"
+	"github.com/samber/lo"
+	"github.com/siliconflow/siliconcloud-cli/config"
+	"github.com/siliconflow/siliconcloud-cli/lib"
+	"github.com/siliconflow/siliconcloud-cli/meta"
+	"github.com/urfave/cli/v2"
+	"hash/crc64"
+	"io"
+	"os"
+	"path/filepath"
+	"regexp"
+)
+
+func Upload(c *cli.Context) error {
+	args, err := globalArgs.Parse(c, meta.CmdUpload)
+	if err != nil {
+		return cli.Exit(err, meta.LoadError)
+	}
+	setLogVerbose(args.Verbose)
+	logs.Debugf("args: %#v\n", args)
+
+	if err = checkType(args); err != nil {
+		return err
+	}
+
+	if err = checkName(args); err != nil {
+		return err
+	}
+
+	modelPath, err := checkPath(args)
+	if err != nil {
+		return err
+	}
+
+	stat, err := os.Stat(modelPath)
+	if err != nil {
+		return cli.Exit(fmt.Errorf("check path failed: %s", err), meta.LoadError)
+	}
+
+	apiKey, err := lib.NewSfFolder().GetKey()
+	if err != nil {
+		return err
+	}
+
+	client := lib.NewClient(args.BaseDomain, apiKey)
+
+	var filesToUpload []*lib.FileToUpload
+
+	if stat.IsDir() {
+		// recursively upload all files in the directory
+		err = filepath.Walk(modelPath, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+
+			if !info.IsDir() {
+				// calculate file relative path
+				relPath, err := filepath.Rel(modelPath, path)
+				if err != nil {
+					return err
+				}
+
+				filesToUpload = append(filesToUpload, &lib.FileToUpload{
+					Path:    filepath.ToSlash(path),
+					RelPath: filepath.ToSlash(relPath),
+					Size:    info.Size(),
+				})
+			}
+
+			return err
+		})
+
+		if err != nil {
+			return cli.Exit(fmt.Errorf("traverse dir failed: %s", err), meta.LoadError)
+		}
+	} else {
+		// 上传单个文件
+		relPath, err := filepath.Rel(filepath.Dir(modelPath), modelPath)
+		if err != nil {
+			return err
+		}
+		filesToUpload = append(filesToUpload, &lib.FileToUpload{
+			Path:    filepath.ToSlash(modelPath),
+			RelPath: filepath.ToSlash(relPath),
+			Size:    stat.Size(),
+		})
+	}
+
+	// start to upload files
+	for _, fileToUpload := range filesToUpload {
+		// calculate file hash
+		sha256sum, err := calculateHash(fileToUpload.Path)
+		if err != nil {
+			return err
+		}
+
+		fileToUpload.Signature = sha256sum
+		logs.Debugf(fmt.Sprintf("file: %s, signature: %s", fileToUpload.RelPath, fileToUpload.Signature))
+
+		// pass sha256sum to the server
+		sign, err := client.Sign(sha256sum)
+		if err != nil {
+			return err
+		}
+
+		fileRecord := sign.Data.File
+		if len(fileRecord.Id) < 1 {
+			// upload file
+			fileStorage := sign.Data.Storage
+			ossClient, err := lib.NewAliOssStorageClient(fileStorage.Endpoint, fileStorage.Bucket, fileRecord.AccessKeyId, fileRecord.AccessKeySecret, fileRecord.SecurityToken)
+			if err != nil {
+				return err
+			}
+
+			_, err = ossClient.UploadFile(fileToUpload, fileRecord.ObjectKey)
+			if err != nil {
+				return err
+			}
+
+			// commit
+			newFileRecord, err := client.CommitFile(fileToUpload.Signature, fileRecord.ObjectKey)
+			if err != nil {
+				return err
+			}
+			fileToUpload.Id = newFileRecord.Data.File.Id
+			fileToUpload.RemoteKey = newFileRecord.Data.File.ObjectKey
+		} else {
+			// skip
+			fileToUpload.Id = fileRecord.Id
+			fileToUpload.RemoteKey = fileRecord.ObjectKey
+		}
+	}
+
+	// commit model
+	modelFiles := lo.Map[*lib.FileToUpload, *lib.ModelFile](filesToUpload, func(file *lib.FileToUpload, _ int) *lib.ModelFile {
+		return &lib.ModelFile{
+			FileId: file.Id,
+			Path:   file.RelPath,
+		}
+	})
+	_, err = client.CommitModel(args.Name, args.Type, modelFiles)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(os.Stdout, "uploaded successfully\n")
+
+	return nil
+}
+
+// calculateHash calculates the SHA256 hash of a file.
+func calculateHash(filePath string) (string, error) {
+	// read file and calculate CRC64
+	tabECMA := crc64.MakeTable(crc64.ECMA)
+	hashCRC := crc64.New(tabECMA)
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+	io.Copy(hashCRC, file)
+	crc1 := hashCRC.Sum64()
+
+	// reset file pointer to the beginning
+	_, err = file.Seek(0, 0)
+	if err != nil {
+		return "", err
+	}
+
+	// MD5
+	hashMD5 := md5.New()
+	io.Copy(hashMD5, file)
+	mdHex := base64.StdEncoding.EncodeToString(hashMD5.Sum(nil))
+
+	// 计算SHA256
+	hasher := sha256.New()
+	hasher.Write([]byte(fmt.Sprintf("%s%d", mdHex, crc1)))
+	hashBytes := hasher.Sum(nil)
+	hashString := hex.EncodeToString(hashBytes)
+	logs.Debugf("file: %s, crc64: %d, md5: %s, sha256: %s", filePath, crc1, mdHex, hashString)
+	return hashString, nil
+}
+
+func checkType(args *config.Argument) error {
+	if args.Type == "" {
+		return cli.Exit("The following arguments are required: type", meta.LoadError)
+	}
+
+	modelType := meta.UploadFileType(args.Type)
+	if !lo.Contains[meta.UploadFileType](meta.ModelTypes, modelType) {
+		return cli.Exit(fmt.Sprintf("Unsupported type, only works for %s", meta.ModelTypesStr), meta.LoadError)
+	}
+
+	return nil
+}
+
+func checkPath(args *config.Argument) (string, error) {
+	if args.Path == "" {
+		return "", cli.Exit("The following arguments are required: path", meta.LoadError)
+	}
+
+	exists, err := util.PathExist(args.Path)
+	if err != nil {
+		return "", cli.Exit(fmt.Errorf("check path failed: %s", err), meta.LoadError)
+	}
+	if !exists {
+		return "", cli.Exit(fmt.Sprintf("path %s does not exist", args.Path), meta.LoadError)
+	}
+
+	if !filepath.IsAbs(args.Path) {
+		cwd, err := os.Getwd()
+		if err != nil {
+			return "", cli.Exit(fmt.Errorf("get current path failed: %s", err), meta.LoadError)
+		}
+		ap := filepath.Join(cwd, args.Path)
+		return ap, nil
+	}
+
+	return args.Path, nil
+}
+
+func checkName(args *config.Argument) error {
+	if args.Name == "" {
+		return cli.Exit("The following arguments are required: name", meta.LoadError)
+	}
+
+	re := regexp.MustCompile(`^[\w-]+$`)
+	matches := re.MatchString(args.Name)
+	if !matches {
+		return cli.Exit(fmt.Errorf("invalid \"name\", it can only include numbers, English letters, and \"-\" or \"_\""), meta.LoadError)
+	}
+	return nil
+}

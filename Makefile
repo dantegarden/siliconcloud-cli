@@ -1,0 +1,48 @@
+
+NAME := siliconcloud
+OUTPUT_BIN ?= execs/${NAME}
+PACKAGE    := github.com/siliconflow/${NAME}-cli
+VERSION    := v0.0.1
+CGO_ENABLED?=0
+GO_FLAGS   ?=
+GIT_REV    ?= $(shell git rev-parse --short HEAD)
+GO_TAGS	   ?= netgo
+ifeq ($(shell uname), Darwin)
+DATE       ?= $(shell TZ=GMT date -j -f "%s" ${SOURCE_DATE_EPOCH} +"%Y-%m-%dT%H:%M:%SZ")
+else
+DATE       ?= $(shell date -u -d @${SOURCE_DATE_EPOCH} +"%Y-%m-%dT%H:%M:%SZ")
+endif
+
+deps:
+	go mod tidy
+
+clean:
+	rm -rf out/*
+
+build: deps
+	@CGO_ENABLED=${CGO_ENABLED} go build ${GO_FLAGS} \
+	ldflags "-w -s -X ${PACKAGE}/meta.Version=${VERSION} -X ${PACKAGE}/meta.Commit=${GIT_REV} -X ${PACKAGE}/meta.BuildDate=${DATE}" \
+	-a -tags=${GO_TAGS} -o ${OUTPUT_BIN} main.go
+
+install: build
+	cp out/{CLI_NAME} /usr/local/bin
+
+build_windows:
+	@CGO_ENABLED=${CGO_ENABLED} @GOOS=windows @GOARCH=amd64 go build ${GO_FLAGS} \
+	ldflags "-w -s -X ${PACKAGE}/meta.Version=${VERSION} -X ${PACKAGE}/meta.Commit=${GIT_REV} -X ${PACKAGE}/meta.BuildDate=${DATE}" \
+	-a -tags=${GO_TAGS} -o ${OUTPUT_BIN}.exe main.go
+
+build_linux:
+	@CGO_ENABLED=${CGO_ENABLED} @GOOS=linux @GOARCH=amd64 go build ${GO_FLAGS} \
+	ldflags "-w -s -X ${PACKAGE}/meta.Version=${VERSION} -X ${PACKAGE}/meta.Commit=${GIT_REV} -X ${PACKAGE}/meta.BuildDate=${DATE}" \
+	-a -tags=${GO_TAGS} -o ${OUTPUT_BIN} main.go
+
+build_mac:
+	@CGO_ENABLED=${CGO_ENABLED} @GOOS=darwin @GOARCH=amd64 go build ${GO_FLAGS} \
+	ldflags "-w -s -X ${PACKAGE}/meta.Version=${VERSION} -X ${PACKAGE}/meta.Commit=${GIT_REV} -X ${PACKAGE}/meta.BuildDate=${DATE}" \
+	-a -tags=${GO_TAGS} -o ${OUTPUT_BIN} main.go
+
+build_linux_arm64:
+	@CGO_ENABLED=${CGO_ENABLED} @GOOS=linux @GOARCH=arm64 go build ${GO_FLAGS} \
+	ldflags "-w -s -X ${PACKAGE}/meta.Version=${VERSION} -X ${PACKAGE}/meta.Commit=${GIT_REV} -X ${PACKAGE}/meta.BuildDate=${DATE}" \
+	-a -tags=${GO_TAGS} -o ${OUTPUT_BIN} main.go
