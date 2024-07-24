@@ -19,7 +19,7 @@ deps:
 	go mod tidy
 
 clean:
-	rm -rf out/*
+	rm -rf execs/*
 
 build: deps
 	@CGO_ENABLED=${CGO_ENABLED} go build ${GO_FLAGS} \
