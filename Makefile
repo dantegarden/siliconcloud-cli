@@ -27,7 +27,7 @@ build: deps
 	-a -tags=${GO_TAGS} -o ${OUTPUT_BIN} main.go
 
 install: build
-	cp out/{CLI_NAME} /usr/local/bin
+	cp ${OUTPUT_BIN} /usr/local/bin
 
 build_windows:
 	@CGO_ENABLED=${CGO_ENABLED} GOOS=windows GOARCH=amd64 go build ${GO_FLAGS} \

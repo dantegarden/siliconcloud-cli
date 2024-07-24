@@ -22,6 +22,6 @@ func Logout(c *cli.Context) error {
 		return err
 	}
 
-	fmt.Fprint(os.Stdout, "Successfully logged out")
+	fmt.Fprintln(os.Stdout, "Logged out successfully")
 	return nil
 }
