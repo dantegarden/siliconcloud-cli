@@ -7,6 +7,7 @@ CGO_ENABLED?=0
 GO_FLAGS   ?=
 GIT_REV    ?= $(shell git rev-parse --short HEAD)
 GO_TAGS	   ?= netgo
+SOURCE_DATE_EPOCH ?= $(shell date +%s)
 ifeq ($(shell uname), Darwin)
 DATE       ?= $(shell TZ=GMT date -j -f "%s" ${SOURCE_DATE_EPOCH} +"%Y-%m-%dT%H:%M:%SZ")
 else
