@@ -32,6 +32,6 @@ func Login(c *cli.Context) error {
 		return err
 	}
 
-	fmt.Fprint(os.Stdout, "login success")
+	fmt.Fprint(os.Stdout, "Login success")
 	return nil
 }

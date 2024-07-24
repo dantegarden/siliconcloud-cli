@@ -14,7 +14,7 @@ func Init() *cli.App {
 	// flags
 	verboseFlag := cli.BoolFlag{Name: "verbose,vv", Usage: "turn on verbose mode", Destination: &globalArgs.Verbose}
 	baseDomainFlag := cli.StringFlag{Name: "base_domain", Usage: "Specify the request domain.", Destination: &globalArgs.BaseDomain, Value: meta.DefaultDomain, Required: false}
-	apiKeyFlag := cli.StringFlag{Name: "api_key", Aliases: []string{"key"}, Usage: "Specify the api key.", Destination: &globalArgs.ApiKey, Required: true}
+	apiKeyFlag := cli.StringFlag{Name: "api_key", Aliases: []string{"k"}, Usage: "Specify the api key.", Destination: &globalArgs.ApiKey, Required: true}
 	typeFlag := cli.StringFlag{Name: "type", Aliases: []string{"t"}, Usage: fmt.Sprintf("Specify the mode type. (Only works for %s)", meta.ModelTypesStr), Destination: &globalArgs.Type}
 	pathFlag := cli.StringFlag{Name: "path", Aliases: []string{"p"}, Usage: "Specify the path to upload.", Destination: &globalArgs.Path}
 	nameFlag := cli.StringFlag{Name: "name", Aliases: []string{"n"}, Usage: "Specify the name of model.", Destination: &globalArgs.Name}
@@ -22,8 +22,11 @@ func Init() *cli.App {
 
 	app := cli.NewApp()
 	app.Name = meta.Name
+	app.Usage = meta.Description
 	app.Version = meta.Version
-	app.Description = meta.Description
+	cli.VersionPrinter = func(cCtx *cli.Context) {
+		fmt.Printf("Version: %s\nGit Rev: %s\nBuild At: %s\n", cCtx.App.Version, meta.Commit, meta.BuildDate)
+	}
 
 	// global flags
 	app.Flags = []cli.Flag{

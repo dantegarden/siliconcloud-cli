@@ -49,7 +49,7 @@ func ListFilesModel(c *cli.Context) error {
 	fmt.Fprintln(w, "Paths:")
 	// Print data rows
 	for _, mf := range modelFiles {
-		fmt.Fprintf(w, "%s\n", mf.Path)
+		fmt.Fprintf(w, "  %s\n", mf.Path)
 	}
 	w.Flush()
 

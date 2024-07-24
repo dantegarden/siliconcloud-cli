@@ -4,6 +4,7 @@ const (
 	ApiKeyInvalid     = "Invalid api key, please check your api key."
 	ModelNotFound     = "The model is not found."
 	ModelFileNotFound = "The model file is not found."
+	NotLoggedIn       = "Not logged in"
 )
 
 type ErrNo struct {

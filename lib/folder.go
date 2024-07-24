@@ -51,7 +51,11 @@ func (s *SfFolder) RemoveKey() error {
 	keyFilePath := s.folderPath(meta.SfApiKey)
 	_, err := os.Stat(keyFilePath)
 	if os.IsNotExist(err) {
-		return cli.Exit(fmt.Errorf("not logged in"), meta.LoadError)
+		return cli.Exit(meta.NotLoggedIn, meta.LoadError)
+	}
+	err = os.Remove(keyFilePath)
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -60,7 +64,7 @@ func (s *SfFolder) GetKey() (string, error) {
 	keyFilePath := s.folderPath(meta.SfApiKey)
 	_, err := os.Stat(keyFilePath)
 	if os.IsNotExist(err) {
-		return "", cli.Exit(fmt.Errorf("not logged in"), meta.LoadError)
+		return "", cli.Exit(meta.NotLoggedIn, meta.LoadError)
 	}
 	// 读取文件内容
 	content, err := ioutil.ReadFile(keyFilePath)
