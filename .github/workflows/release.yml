@@ -121,6 +121,7 @@ jobs:
         with:
           submodules: false
           ref: ${{github.ref}}
+      - uses: dcarbone/install-jq-action@v2.1.0
       - name: Download assets and compute shasum
         run: |
           TAG=${{ github.ref_name }}
