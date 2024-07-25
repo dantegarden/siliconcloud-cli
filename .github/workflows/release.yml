@@ -111,7 +111,7 @@ jobs:
           Compress-Archive -Path ./out/siliconcloud.exe -DestinationPath ./out/siliconcloud-cli-windows-${version}-amd64.zip
           bash ./tools/upload_asset.sh ${version} ./out/siliconcloud-cli-windows-${version}-amd64.zip
   finish_release:
-    needs: [ build_for_linux, build_for_windows ]
+    needs: [ build_for_macosx, build_for_linux, build_for_windows ]
     name: Finish the release
     runs-on: ubuntu-latest
     env:
