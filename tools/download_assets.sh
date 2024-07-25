@@ -18,8 +18,8 @@ do
     echo ASSET_ID=$ASSET_ID
     wget -q --auth-no-challenge --header='Accept:application/octet-stream' https://$GITHUB_TOKEN:@api.github.com/repos/$REPO/releases/assets/$ASSET_ID  -O $filename
     ls -l siliconcloud-cli*
-    shasum -a 256 "$filename" >> SHASUMS256.txt
+    shasum -a 256 "$filename" >> checksums.sha256
 done
 
-cat ./SHASUMS256.txt
+cat ./checksums.sha256
 

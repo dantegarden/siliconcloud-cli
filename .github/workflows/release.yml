@@ -127,5 +127,5 @@ jobs:
           TAG=${{ github.ref_name }}
           VERSION=${TAG#v}
           bash tools/download_assets.sh ${VERSION}
-          bash tools/upload_asset.sh ${VERSION} SHASUMS256.txt
+          bash tools/upload_asset.sh ${VERSION} checksums.sha256
           bash tools/finish_release.sh ${VERSION}

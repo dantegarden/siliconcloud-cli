@@ -7,7 +7,7 @@ REPO=dantegarden/siliconcloud-cli
 if [[ $ASSET == *.tgz ]]
 then
   TYPE=application/x-compressed-tar
-elif [[ $ASSET == *.txt ]]
+elif [[ $ASSET == *.sha256 ]]
 then
   TYPE=text/plain
 else
