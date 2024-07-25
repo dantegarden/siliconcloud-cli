@@ -3,10 +3,8 @@
 VERSION=$1
 
 LIST=(
-#    "siliconcloud-cli-macosx-$VERSION-amd64.tgz"
-#    "siliconcloud-cli-macosx-$VERSION-arm64.tgz"
-    "siliconcloud-cli-$VERSION.pkg"
-#    "siliconcloud-cli-macosx-$VERSION-universal.tgz"
+    "siliconcloud-cli-macosx-$VERSION-amd64.tgz"
+    "siliconcloud-cli-macosx-$VERSION-arm64.tgz"
     "siliconcloud-cli-linux-$VERSION-amd64.tgz"
     "siliconcloud-cli-linux-$VERSION-arm64.tgz"
     "siliconcloud-cli-windows-$VERSION-amd64.zip"
