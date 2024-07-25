@@ -15,6 +15,7 @@ do
     curl -fsSL -O \
         -H "Authorization: Bearer $GITHUB_TOKEN" \
         https://github.com/$REPO/releases/download/v"$VERSION"/"$filename"
+    ls -l
     shasum -a 256 "$filename" >> SHASUMS256.txt
 done
 
