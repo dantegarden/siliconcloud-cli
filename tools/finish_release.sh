@@ -12,8 +12,6 @@ REPO=datengarden/siliconcloud-cli
 if [[ "$VERSION" == *"-beta" ]]; then
   echo "beta. skip."
 else
-  echo "${VERSION}" > out/version
-
   RELEASE_ID=$(curl -fsSL \
     -H "Accept: application/vnd.github+json" \
     -H "Authorization: Bearer $GITHUB_TOKEN" \
