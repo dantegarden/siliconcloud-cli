@@ -24,10 +24,10 @@ clean:
 build: deps
 	@CGO_ENABLED=${CGO_ENABLED} go build ${GO_FLAGS} \
 	-ldflags "-w -s -X '${PACKAGE}/meta.Version=${VERSION}' -X '${PACKAGE}/meta.Commit=${GIT_REV}' -X '${PACKAGE}/meta.BuildDate=${DATE}'" \
-	-a -tags=${GO_TAGS} -o ${OUTPUT_BIN} main.go
+	-a -tags=${GO_TAGS} -o execs/${NAME} main.go
 
 install: build
-	cp ${OUTPUT_BIN} /usr/local/bin/${NAME}
+	cp execs/${NAME} /usr/local/bin/${NAME}
 
 build_windows:
 	@CGO_ENABLED=${CGO_ENABLED} GOOS=windows GOARCH=amd64 go build ${GO_FLAGS} \
