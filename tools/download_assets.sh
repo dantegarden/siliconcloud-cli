@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 VERSION=$1
-
+REPO=dantegarden/siliconcloud-cli
 LIST=(
     "siliconcloud-cli-macosx-$VERSION-amd64.tgz"
     "siliconcloud-cli-macosx-$VERSION-arm64.tgz"
@@ -14,7 +14,7 @@ for filename in "${LIST[@]}"
 do
     curl -fsSL -O \
         -H "Authorization: Bearer $GITHUB_TOKEN" \
-        https://github.com/siliconcloud/siliconcloud-cli/releases/download/v"$VERSION"/"$filename"
+        https://github.com/$REPO/releases/download/v"$VERSION"/"$filename"
     shasum -a 256 "$filename" >> SHASUMS256.txt
 done
 
