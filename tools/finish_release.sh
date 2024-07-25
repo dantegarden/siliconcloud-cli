@@ -4,10 +4,10 @@ set -e
 
 VERSION=$1
 
-SILICONCLOUD="./out/siliconcloud"
+#SILICONCLOUD="./out/siliconcloud"
 REPO=datengarden/siliconcloud-cli
 
-go build -ldflags "-X 'github.com/siliconflow/siliconcloud-cli/meta.Version=${VERSION}'" -o $SILICONCLOUD main.go
+#go build -ldflags "-X 'github.com/siliconflow/siliconcloud-cli/meta.Version=${VERSION}'" -o SILICONCLOUD main.go
 
 if [[ "$VERSION" == *"-beta" ]]; then
   echo "beta. skip."
