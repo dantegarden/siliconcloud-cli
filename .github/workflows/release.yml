@@ -9,7 +9,7 @@ jobs:
     name: Create new release
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }} # This token is provided by Actions, you do not need to create your own token
     steps:
       - uses: actions/checkout@v3
         with:
@@ -23,7 +23,7 @@ jobs:
     name: Build for Linux
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }} # This token is provided by Actions, you do not need to create your own token
     steps:
       - uses: actions/checkout@v3
         with:
@@ -54,7 +54,7 @@ jobs:
     name: Build for Windows
     runs-on: windows-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -83,13 +83,11 @@ jobs:
     name: Finish the release
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
-      ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
       - uses: actions/checkout@v3
         with:
-          submodules: true
+          submodules: false
           ref: ${{github.ref}}
       - name: Download assets and compute shasum
         run: |
