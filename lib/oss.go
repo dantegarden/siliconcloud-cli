@@ -60,6 +60,7 @@ type OssProgressListener struct {
 	File      *FileToUpload
 	Bar       *progressbar.ProgressBar
 	Throttled func(x int)
+	FileIndex string
 }
 
 func (listener *OssProgressListener) ProgressChanged(event *oss.ProgressEvent) {
@@ -67,7 +68,7 @@ func (listener *OssProgressListener) ProgressChanged(event *oss.ProgressEvent) {
 	case oss.TransferStartedEvent:
 		bar := progressbar.DefaultBytes(
 			event.TotalBytes,
-			fmt.Sprintf("uploading %s", filepath.Base(listener.File.RelPath)),
+			fmt.Sprintf("(%s) %s", listener.FileIndex, filepath.Base(listener.File.RelPath)),
 		)
 		listener.Bar = bar
 		listener.Throttled = Throttle(func(x int) {
@@ -116,9 +117,10 @@ func NewAliOssStorageClient(endpoint, bucketName, accessKey, secretKey, security
 	return ossStorageClient, nil
 }
 
-func (a *AliOssStorageClient) UploadFile(file *FileToUpload, objectName string) (string, error) {
+func (a *AliOssStorageClient) UploadFile(file *FileToUpload, objectName string, fileIndex string) (string, error) {
 	err := a.ossBucket.PutObjectFromFile(objectName, file.Path, oss.ObjectACL(oss.ACLPublicRead), oss.Progress(&OssProgressListener{
-		File: file,
+		File:      file,
+		FileIndex: fileIndex,
 	}))
 
 	if err != nil {

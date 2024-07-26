@@ -70,8 +70,6 @@ func Upload(c *cli.Context) error {
 				}
 			}
 
-			fmt.Fprintln(os.Stdout, filepath.Base(path))
-
 			if !info.IsDir() {
 				// calculate file relative path
 				relPath, err := filepath.Rel(modelPath, path)
@@ -105,8 +103,15 @@ func Upload(c *cli.Context) error {
 		})
 	}
 
+	total := len(filesToUpload)
+	if total < 1 {
+		return cli.Exit("No files found to upload, you cannot upload an empty directory!", meta.LoadError)
+	}
+
 	// start to upload files
-	for _, fileToUpload := range filesToUpload {
+	fmt.Fprintln(os.Stdout, fmt.Sprintf("Start uploading %d files", total))
+
+	for i, fileToUpload := range filesToUpload {
 		// calculate file hash
 		sha256sum, err := calculateHash(fileToUpload.Path)
 		if err != nil {
@@ -122,6 +127,8 @@ func Upload(c *cli.Context) error {
 			return err
 		}
 
+		fileIndex := fmt.Sprintf("%d/%d", i+1, total)
+
 		fileRecord := sign.Data.File
 		if len(fileRecord.Id) < 1 {
 			// upload file
@@ -131,7 +138,7 @@ func Upload(c *cli.Context) error {
 				return err
 			}
 
-			_, err = ossClient.UploadFile(fileToUpload, fileRecord.ObjectKey)
+			_, err = ossClient.UploadFile(fileToUpload, fileRecord.ObjectKey, fileIndex)
 			if err != nil {
 				return err
 			}
@@ -147,6 +154,8 @@ func Upload(c *cli.Context) error {
 			// skip
 			fileToUpload.Id = fileRecord.Id
 			fileToUpload.RemoteKey = fileRecord.ObjectKey
+
+			fmt.Fprintln(os.Stdout, fmt.Sprintf("(%s) %s Already Uploaded", fileIndex, fileToUpload.RelPath))
 		}
 	}
 
@@ -157,6 +166,7 @@ func Upload(c *cli.Context) error {
 			Path:   file.RelPath,
 		}
 	})
+
 	_, err = client.CommitModel(args.Name, args.Type, modelFiles)
 	if err != nil {
 		return err
