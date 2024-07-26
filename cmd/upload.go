@@ -62,6 +62,16 @@ func Upload(c *cli.Context) error {
 				return err
 			}
 
+			for _, uploadPath := range meta.IgnoreUploadDirs {
+				if filepath.Base(path) == uploadPath {
+					if info.IsDir() {
+						return filepath.SkipDir
+					}
+				}
+			}
+
+			fmt.Fprintln(os.Stdout, filepath.Base(path))
+
 			if !info.IsDir() {
 				// calculate file relative path
 				relPath, err := filepath.Rel(modelPath, path)

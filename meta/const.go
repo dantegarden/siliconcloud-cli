@@ -38,6 +38,7 @@ const (
 	TypeHyperNetwork UploadFileType = "hypernetwork"
 	TypeClip         UploadFileType = "clip"
 	TypeUpscale      UploadFileType = "upscale"
+	TypeLLM          UploadFileType = "llm"
 )
 
 var ModelTypes = []UploadFileType{
@@ -49,6 +50,7 @@ var ModelTypes = []UploadFileType{
 	TypeHyperNetwork,
 	TypeClip,
 	TypeUpscale,
+	TypeLLM,
 }
 
 var ModelTypesStr = func(arr []UploadFileType) string {
@@ -76,3 +78,9 @@ const (
 	OSSObjectKey        = "https://%s.%s.aliyuncs.com/%s"
 	OKCode              = 20000
 )
+
+// IgnoreUploadDirs ignore files when upload
+var IgnoreUploadDirs = []string{
+	".git",
+	".idea",
+}
