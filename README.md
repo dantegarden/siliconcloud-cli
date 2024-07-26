@@ -50,9 +50,10 @@ In order to build it from source you must:
 The Silicon Cloud CLI uses api-keys to authenticate client. To login your machine, run the following CLI:
 
 ```bash
+# use the environment variable SF_APIKEY
 siliconcloud login
-# or using an environment variable
-siliconcloud login -k $API_KEY
+# or using an optional flag to provide the api-key
+siliconcloud login -k $SF_APIKEY
 ```
 
 ### Logout

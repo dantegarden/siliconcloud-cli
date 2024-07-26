@@ -73,6 +73,7 @@ const (
 	SfFolder            = ".siliconflow"
 	SfApiKey            = "apikey"
 	OSWindows           = "windows"
+	EnvApiKey           = "SF_APIKEY"
 	EnvUserProfile      = "USERPROFILE"
 	EnvHome             = "HOME"
 	OSSObjectKey        = "https://%s.%s.aliyuncs.com/%s"
