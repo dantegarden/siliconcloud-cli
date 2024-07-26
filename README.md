@@ -87,6 +87,11 @@ To view all files in a model, run the following CLI:
 siliconcloud model ls-files -n mymodel -t checkpoint
 ```
 
+If you want to see the files in a model in tree view, run the following CLI:
+```bash
+siliconcloud model ls-files -n mymodel -t checkpoint --tree
+```
+
 You must specify model name and model type by using the `-n` and `-t` flags respectively.
 
 ### Remove File
