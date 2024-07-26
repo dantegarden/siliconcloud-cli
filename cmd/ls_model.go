@@ -36,6 +36,11 @@ func ListModel(c *cli.Context) error {
 
 	modelRecords := modelResp.Data.Models
 
+	if len(modelRecords) < 1 {
+		fmt.Fprintln(os.Stdout, "No models found.")
+		return nil
+	}
+
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', tabwriter.Debug)
 	fmt.Fprintln(w, "Name\t Type\t Last Modified Time\t")
 	// Print data rows
