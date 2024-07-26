@@ -14,6 +14,7 @@ type Argument struct {
 	Name       string // name of the model
 	ShowFiles  bool   // show files
 	FilePath   string // file path
+	FormatTree bool   // format tree
 }
 
 func NewArgument() *Argument {

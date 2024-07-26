@@ -7,11 +7,10 @@ import (
 	"github.com/siliconflow/siliconcloud-cli/meta"
 	"github.com/urfave/cli/v2"
 	"os"
-	"text/tabwriter"
 )
 
 func ListFilesModel(c *cli.Context) error {
-	args, err := globalArgs.Parse(c, meta.CmdLs)
+	args, err := globalArgs.Parse(c, meta.CmdLsFiles)
 	if err != nil {
 		return cli.Exit(err, meta.LoadError)
 	}
@@ -45,13 +44,19 @@ func ListFilesModel(c *cli.Context) error {
 		return nil
 	}
 
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', tabwriter.TabIndent)
-	fmt.Fprintln(w, "Paths:")
-	// Print data rows
-	for _, mf := range modelFiles {
-		fmt.Fprintf(w, "  %s\n", mf.Path)
+	if args.FormatTree {
+		root := lib.NewNode("")
+		for _, mf := range modelFiles {
+			root.AddPath(mf.Path)
+		}
+		root.PrintTree("")
+	} else {
+		fmt.Fprintln(os.Stdout, "Paths:")
+		// Print data rows
+		for _, mf := range modelFiles {
+			fmt.Fprintf(os.Stdout, "  %s\n", mf.Path)
+		}
 	}
-	w.Flush()
 
 	return nil
 }

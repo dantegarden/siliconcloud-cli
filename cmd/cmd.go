@@ -19,6 +19,7 @@ func Init() *cli.App {
 	pathFlag := cli.StringFlag{Name: "path", Aliases: []string{"p"}, Usage: "Specify the path to upload.", Destination: &globalArgs.Path}
 	nameFlag := cli.StringFlag{Name: "name", Aliases: []string{"n"}, Usage: "Specify the name of model.", Destination: &globalArgs.Name}
 	filePathFlag := cli.StringFlag{Name: "path", Usage: "Specify the filepath to remove.", Destination: &globalArgs.FilePath}
+	formatTreeFlag := cli.BoolFlag{Name: "tree", Usage: "Display in file tree format.", Destination: &globalArgs.FormatTree, Required: false}
 
 	app := cli.NewApp()
 	app.Name = meta.Name
@@ -84,6 +85,7 @@ func Init() *cli.App {
 					Flags: []cli.Flag{
 						&typeFlag,
 						&nameFlag,
+						&formatTreeFlag,
 					},
 					Action: ListFilesModel,
 				},
