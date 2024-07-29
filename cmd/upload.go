@@ -28,7 +28,7 @@ func Upload(c *cli.Context) error {
 	setLogVerbose(args.Verbose)
 	logs.Debugf("args: %#v\n", args)
 
-	if err = checkType(args); err != nil {
+	if err = checkType(args, true); err != nil {
 		return err
 	}
 
@@ -209,8 +209,8 @@ func calculateHash(filePath string) (string, error) {
 	return hashString, nil
 }
 
-func checkType(args *config.Argument) error {
-	if args.Type == "" {
+func checkType(args *config.Argument, required bool) error {
+	if required && args.Type == "" {
 		return cli.Exit("The following arguments are required: type", meta.LoadError)
 	}
 

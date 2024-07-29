@@ -18,7 +18,7 @@ func ListModel(c *cli.Context) error {
 	setLogVerbose(args.Verbose)
 	logs.Debugf("args: %#v\n", args)
 
-	if err = checkType(args); err != nil {
+	if err = checkType(args, false); err != nil {
 		return err
 	}
 
