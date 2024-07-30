@@ -18,7 +18,7 @@ const (
 )
 
 const (
-	DefaultDomain = "https://api.siliconflow.cn"
+	DefaultDomain = "https://bizyair-api.siliconflow.cn"
 )
 
 const (

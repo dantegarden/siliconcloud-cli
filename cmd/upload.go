@@ -214,6 +214,10 @@ func checkType(args *config.Argument, required bool) error {
 		return cli.Exit("The following arguments are required: type", meta.LoadError)
 	}
 
+	if args.Type == "" {
+		return nil
+	}
+
 	modelType := meta.UploadFileType(args.Type)
 	if !lo.Contains[meta.UploadFileType](meta.ModelTypes, modelType) {
 		return cli.Exit(fmt.Sprintf("Unsupported type, only works for %s", meta.ModelTypesStr), meta.LoadError)
