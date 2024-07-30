@@ -54,7 +54,7 @@ func (c *Client) UserInfo() (*Response[UserInfo], error) {
 }
 
 func (c *Client) Sign(signature string) (*Response[FilesResp], error) {
-	serverUrl := fmt.Sprintf("%s/api/%s/file", c.Domain, meta.APIv1)
+	serverUrl := fmt.Sprintf("%s/x/%s/file", c.Domain, meta.APIv1)
 	body, statusCode, err := c.doPost(serverUrl, FileReq{
 		Sign: signature,
 	}, c.authHeader())
@@ -69,7 +69,7 @@ func (c *Client) Sign(signature string) (*Response[FilesResp], error) {
 }
 
 func (c *Client) CommitFile(signature string, objectKey string) (*Response[FilesResp], error) {
-	serverUrl := fmt.Sprintf("%s/api/%s/file/commit", c.Domain, meta.APIv1)
+	serverUrl := fmt.Sprintf("%s/x/%s/file/commit", c.Domain, meta.APIv1)
 	body, statusCode, err := c.doPost(serverUrl, FileCommitReq{
 		Sign:      signature,
 		ObjectKey: objectKey,
@@ -85,7 +85,7 @@ func (c *Client) CommitFile(signature string, objectKey string) (*Response[Files
 }
 
 func (c *Client) CommitModel(modelName string, modelType string, modelFiles []*ModelFile) (*Response[ModelCommitResp], error) {
-	serverUrl := fmt.Sprintf("%s/api/%s/model/commit", c.Domain, meta.APIv1)
+	serverUrl := fmt.Sprintf("%s/x/%s/model/commit", c.Domain, meta.APIv1)
 	body, statusCode, err := c.doPost(serverUrl, ModelCommitReq{
 		Name:  modelName,
 		Type:  modelType,
@@ -102,7 +102,7 @@ func (c *Client) CommitModel(modelName string, modelType string, modelFiles []*M
 }
 
 func (c *Client) ListModel(modelType string) (*Response[ModelListResp], error) {
-	serverUrl := fmt.Sprintf("%s/api/%s/model/%s", c.Domain, meta.APIv1, modelType)
+	serverUrl := fmt.Sprintf("%s/x/%s/model/%s", c.Domain, meta.APIv1, modelType)
 	body, statusCode, err := c.doGet(serverUrl, nil, c.authHeader())
 	if err != nil {
 		return nil, cli.Exit(err, meta.ServerError)
@@ -115,7 +115,7 @@ func (c *Client) ListModel(modelType string) (*Response[ModelListResp], error) {
 }
 
 func (c *Client) ListModelFiles(modelType string, modelName string) (*Response[ModelListFilesResp], error) {
-	serverUrl := fmt.Sprintf("%s/api/%s/model/%s/%s/files", c.Domain, meta.APIv1, modelType, modelName)
+	serverUrl := fmt.Sprintf("%s/x/%s/model/%s/%s/files", c.Domain, meta.APIv1, modelType, modelName)
 	body, statusCode, err := c.doGet(serverUrl, nil, c.authHeader())
 	if err != nil {
 		return nil, cli.Exit(err, meta.ServerError)
@@ -128,7 +128,7 @@ func (c *Client) ListModelFiles(modelType string, modelName string) (*Response[M
 }
 
 func (c *Client) RemoveModel(modelType string, modelName string) (*Response[ModelDeleteResp], error) {
-	serverUrl := fmt.Sprintf("%s/api/%s/model/%s/%s", c.Domain, meta.APIv1, modelType, modelName)
+	serverUrl := fmt.Sprintf("%s/x/%s/model/%s/%s", c.Domain, meta.APIv1, modelType, modelName)
 	body, statusCode, err := c.doDelete(serverUrl, nil, c.authHeader())
 	if err != nil {
 		return nil, cli.Exit(err, meta.ServerError)
@@ -141,7 +141,7 @@ func (c *Client) RemoveModel(modelType string, modelName string) (*Response[Mode
 }
 
 func (c *Client) RemoveModelFile(modelType string, modelName string, path string) (*Response[ModelDeleteResp], error) {
-	serverUrl := fmt.Sprintf("%s/api/%s/model/%s/%s/files", c.Domain, meta.APIv1, modelType, modelName)
+	serverUrl := fmt.Sprintf("%s/x/%s/model/%s/%s/files", c.Domain, meta.APIv1, modelType, modelName)
 	body, statusCode, err := c.doDelete(serverUrl, map[string]string{
 		"path": path,
 	}, c.authHeader())
@@ -201,6 +201,7 @@ func (c *Client) doGet(urlStr string, queryParams interface{}, header map[string
 			req.Header.Set(key, value)
 		}
 	}
+	req.Header.Set(meta.HeaderSiliconCliVersion, meta.Version)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -235,6 +236,7 @@ func (c *Client) doPost(url string, data interface{}, header map[string]string) 
 			req.Header.Set(key, value)
 		}
 	}
+	req.Header.Set(meta.HeaderSiliconCliVersion, meta.Version)
 	req.Header.Set(meta.HeaderContentType, meta.JsonContentType)
 
 	resp, err := client.Do(req)

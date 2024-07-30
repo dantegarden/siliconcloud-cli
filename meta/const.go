@@ -61,22 +61,23 @@ var ModelTypesStr = func(arr []UploadFileType) string {
 }(ModelTypes)
 
 const (
-	PercentEncode       = "%2F"
-	HTTPGet             = "GET"
-	HTTPPost            = "POST"
-	HTTPPut             = "PUT"
-	HTTPDelete          = "DELETE"
-	HeaderAuthorization = "Authorization"
-	HeaderContentType   = "Content-Type"
-	JsonContentType     = "application/json"
-	APIv1               = "v1"
-	SfFolder            = ".siliconflow"
-	SfApiKey            = "apikey"
-	OSWindows           = "windows"
-	EnvUserProfile      = "USERPROFILE"
-	EnvHome             = "HOME"
-	OSSObjectKey        = "https://%s.%s.aliyuncs.com/%s"
-	OKCode              = 20000
+	PercentEncode           = "%2F"
+	HTTPGet                 = "GET"
+	HTTPPost                = "POST"
+	HTTPPut                 = "PUT"
+	HTTPDelete              = "DELETE"
+	HeaderAuthorization     = "Authorization"
+	HeaderContentType       = "Content-Type"
+	HeaderSiliconCliVersion = "X-Silicon-CLI-Version"
+	JsonContentType         = "application/json"
+	APIv1                   = "v1"
+	SfFolder                = ".siliconflow"
+	SfApiKey                = "apikey"
+	OSWindows               = "windows"
+	EnvUserProfile          = "USERPROFILE"
+	EnvHome                 = "HOME"
+	OSSObjectKey            = "https://%s.%s.aliyuncs.com/%s"
+	OKCode                  = 20000
 )
 
 // IgnoreUploadDirs ignore files when upload
