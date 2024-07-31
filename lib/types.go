@@ -55,6 +55,13 @@ type ModelFile struct {
 	Path   string `protobuf:"bytes,2,opt,name=path,proto3" json:"path,omitempty" form:"path" query:"path"`
 }
 
+type ModelFileInfo struct {
+	Path              string `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty" form:"path" query:"path"`
+	LabelPath         string `protobuf:"bytes,2,opt,name=labelPath,proto3" json:"label_path,omitempty" form:"label_path" query:"label_path"`
+	RealPath          string `protobuf:"bytes,3,opt,name=realPath,proto3" json:"real_path,omitempty" form:"real_path" query:"real_path"`
+	ClusterSyncStatus string `protobuf:"bytes,4,opt,name=clusterSyncStatus,proto3" json:"cluster_sync_status,omitempty" form:"cluster_sync_status" query:"cluster_sync_status"`
+}
+
 type ModelCommitResp struct {
 }
 
@@ -73,13 +80,13 @@ type ModelListResp struct {
 }
 
 type ModelListFilesReq struct {
-	Type   string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty" path:"type"`
-	Name   string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" path:"name" vd:"(len($) > 0 && len($) < 100)"`
-	Region string `protobuf:"bytes,3,opt,name=region,proto3" json:"region,omitempty" form:"region" query:"region"`
+	Name    string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" path:"name"`
+	ExtName string `protobuf:"bytes,3,opt,name=extName,proto3" json:"ext_name,omitempty" path:"ext_name"`
+	Region  string `protobuf:"bytes,3,opt,name=region,proto3" json:"region,omitempty" form:"region" query:"region"`
 }
 
 type ModelListFilesResp struct {
-	Files []*ModelFile `protobuf:"bytes,1,rep,name=files,proto3" json:"files,omitempty" form:"files" query:"files"`
+	Files []*ModelFileInfo `protobuf:"bytes,1,rep,name=files,proto3" json:"files,omitempty" form:"files" query:"files"`
 }
 
 type ModelDeleteResp struct {

@@ -32,7 +32,7 @@ func Upload(c *cli.Context) error {
 		return err
 	}
 
-	if err = checkName(args); err != nil {
+	if err = checkName(args, true); err != nil {
 		return err
 	}
 
@@ -251,9 +251,13 @@ func checkPath(args *config.Argument) (string, error) {
 	return args.Path, nil
 }
 
-func checkName(args *config.Argument) error {
-	if args.Name == "" {
+func checkName(args *config.Argument, required bool) error {
+	if required && args.Name == "" {
 		return cli.Exit("The following arguments are required: name", meta.LoadError)
+	}
+
+	if args.Name == "" {
+		return nil
 	}
 
 	re := regexp.MustCompile(`^[\w-]+$`)

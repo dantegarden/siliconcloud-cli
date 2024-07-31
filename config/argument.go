@@ -12,6 +12,7 @@ type Argument struct {
 	Path       string // local path to upload
 	Type       string // type of the file to upload
 	Name       string // name of the model
+	ExtName    string // extension name of the model
 	ShowFiles  bool   // show files
 	FilePath   string // file path
 	FormatTree bool   // format tree

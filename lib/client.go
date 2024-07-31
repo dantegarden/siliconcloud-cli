@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/cloudwego/hertz/cmd/hz/util/logs"
+	"github.com/samber/lo"
 	"github.com/siliconflow/siliconcloud-cli/meta"
 	"github.com/urfave/cli/v2"
 	"io/ioutil"
@@ -102,7 +103,10 @@ func (c *Client) CommitModel(modelName string, modelType string, modelFiles []*M
 }
 
 func (c *Client) ListModel(modelType string) (*Response[ModelListResp], error) {
-	serverUrl := fmt.Sprintf("%s/x/%s/model/%s", c.Domain, meta.APIv1, modelType)
+	serverUrl := fmt.Sprintf("%s/x/%s/models", c.Domain, meta.APIv1)
+	if modelType != "" {
+		serverUrl = fmt.Sprintf("%s?type=%s", serverUrl, modelType)
+	}
 	body, statusCode, err := c.doGet(serverUrl, nil, c.authHeader())
 	if err != nil {
 		return nil, cli.Exit(err, meta.ServerError)
@@ -114,9 +118,13 @@ func (c *Client) ListModel(modelType string) (*Response[ModelListResp], error) {
 	return handleResponse[ModelListResp](body)
 }
 
-func (c *Client) ListModelFiles(modelType string, modelName string) (*Response[ModelListFilesResp], error) {
-	serverUrl := fmt.Sprintf("%s/x/%s/model/%s/%s/files", c.Domain, meta.APIv1, modelType, modelName)
-	body, statusCode, err := c.doGet(serverUrl, nil, c.authHeader())
+func (c *Client) ListModelFiles(modelType string, modelName string, extName string) (*Response[ModelListFilesResp], error) {
+	serverUrl := fmt.Sprintf("%s/x/%s/model/%s/files", c.Domain, meta.APIv1, modelType)
+	param := ModelListFilesReq{
+		Name:    modelName,
+		ExtName: extName,
+	}
+	body, statusCode, err := c.doGet(serverUrl, param, c.authHeader())
 	if err != nil {
 		return nil, cli.Exit(err, meta.ServerError)
 	}
@@ -185,7 +193,7 @@ func (c *Client) doGet(urlStr string, queryParams interface{}, header map[string
 			fieldName := v.Type().Field(i).Name
 			fieldValue := fmt.Sprintf("%v", field.Interface())
 			if fieldValue != "" && fieldValue != "0" {
-				query.Add(strings.ToLower(fieldName), fieldValue)
+				query.Add(lo.SnakeCase(fieldName), fieldValue)
 			}
 		}
 		parsedURL.RawQuery = query.Encode()

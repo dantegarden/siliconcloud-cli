@@ -21,7 +21,7 @@ func ListFilesModel(c *cli.Context) error {
 		return err
 	}
 
-	if err = checkName(args); err != nil {
+	if err = checkName(args, false); err != nil {
 		return err
 	}
 
@@ -32,7 +32,7 @@ func ListFilesModel(c *cli.Context) error {
 
 	client := lib.NewClient(args.BaseDomain, apiKey)
 
-	modelFilesResp, err := client.ListModelFiles(args.Type, args.Name)
+	modelFilesResp, err := client.ListModelFiles(args.Type, args.Name, args.ExtName)
 	if err != nil {
 		return err
 	}
@@ -47,14 +47,14 @@ func ListFilesModel(c *cli.Context) error {
 	if args.FormatTree {
 		root := lib.NewNode("")
 		for _, mf := range modelFiles {
-			root.AddPath(mf.Path)
+			root.AddPath(mf.LabelPath)
 		}
 		root.PrintTree("")
 	} else {
 		fmt.Fprintln(os.Stdout, "Paths:")
 		// Print data rows
 		for _, mf := range modelFiles {
-			fmt.Fprintf(os.Stdout, "  %s\n", mf.Path)
+			fmt.Fprintf(os.Stdout, "  %s\n", mf.LabelPath)
 		}
 	}
 
