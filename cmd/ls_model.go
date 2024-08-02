@@ -41,11 +41,11 @@ func ListModel(c *cli.Context) error {
 		return nil
 	}
 
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', tabwriter.Debug)
-	fmt.Fprintln(w, "Name\t Type\t File Count\t Available\t Last Modified Time\t")
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
+	fmt.Fprintln(w, "Name\tType\tFile Count\tAvailable\tLast Modified Time\t")
 	// Print data rows
 	for _, mr := range modelRecords {
-		fmt.Fprintf(w, "%s\t %s\t %d\t %s\t %s\t \n", mr.Name, mr.Type, mr.FileNum, func() string {
+		fmt.Fprintf(w, "%s\t%s\t%d\t%s\t%s\t\n", mr.Name, mr.Type, mr.FileNum, func() string {
 			if mr.Available {
 				return "Yes"
 			}
