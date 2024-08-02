@@ -118,8 +118,9 @@ func (c *Client) ListModel(modelType string) (*Response[ModelListResp], error) {
 }
 
 func (c *Client) ListModelFiles(modelType string, modelName string, extName string) (*Response[ModelListFilesResp], error) {
-	serverUrl := fmt.Sprintf("%s/x/%s/models/%s/files", c.Domain, meta.APIv1, modelType)
+	serverUrl := fmt.Sprintf("%s/x/%s/models/files", c.Domain, meta.APIv1)
 	param := ModelListFilesReq{
+		Type:    modelType,
 		Name:    modelName,
 		ExtName: extName,
 	}

@@ -95,6 +95,7 @@ type ModelListResp struct {
 }
 
 type ModelListFilesReq struct {
+	Type    string `json:"type,omitempty" form:"type" query:"type"`
 	Name    string `json:"name,omitempty" path:"name"`
 	ExtName string `json:"ext_name,omitempty" path:"ext_name"`
 }
