@@ -42,7 +42,7 @@ func ListModel(c *cli.Context) error {
 	}
 
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
-	fmt.Fprintln(w, "Name\tType\tFile Count\tAvailable\tLast Modified Time\t")
+	fmt.Fprintln(w, "NAME\tTYPE\tFILE COUNT\tAVAILABLE\tLAST MODIFIED TIME\t")
 	// Print data rows
 	for _, mr := range modelRecords {
 		fmt.Fprintf(w, "%s\t%s\t%d\t%s\t%s\t\n", mr.Name, mr.Type, mr.FileNum, func() string {

@@ -53,7 +53,7 @@ func ListFilesModel(c *cli.Context) error {
 		root.PrintTree("")
 	} else {
 		w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
-		fmt.Fprintln(w, "Path\tAvailable\t")
+		fmt.Fprintln(w, "PATH\tAVAILABLE\t")
 		// Print data rows
 		for _, mr := range modelFiles {
 			fmt.Fprintf(w, "%s\t%s\t\n", mr.LabelPath, func() string {
