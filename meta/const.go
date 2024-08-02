@@ -38,6 +38,7 @@ const (
 	TypeClip         UploadFileType = "bizyair/clip"
 	TypeClipVision   UploadFileType = "bizyair/clip_vision"
 	TypeUpscale      UploadFileType = "bizyair/upscale"
+	TypeOther        UploadFileType = "other"
 )
 
 var ModelTypes = []UploadFileType{
@@ -50,6 +51,7 @@ var ModelTypes = []UploadFileType{
 	TypeClip,
 	TypeClipVision,
 	TypeUpscale,
+	TypeOther,
 }
 
 var ModelTypesStr = func(arr []UploadFileType) string {
