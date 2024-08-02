@@ -14,7 +14,6 @@ const (
 	CmdLs      = "ls"
 	CmdLsFiles = "ls-files"
 	CmdRm      = "rm"
-	CmdRmFile  = "rm-file"
 )
 
 const (

@@ -42,10 +42,15 @@ func ListModel(c *cli.Context) error {
 	}
 
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', tabwriter.Debug)
-	fmt.Fprintln(w, "Name\t Type\t Last Modified Time\t")
+	fmt.Fprintln(w, "Name\t Type\t File Count\t Available\t Last Modified Time\t")
 	// Print data rows
 	for _, mr := range modelRecords {
-		fmt.Fprintf(w, "%s\t %s\t %s\t\n", mr.Name, mr.Type, mr.UpdatedAt)
+		fmt.Fprintf(w, "%s\t %s\t %d\t %s\t %s\t \n", mr.Name, mr.Type, mr.FileNum, func() string {
+			if mr.Available {
+				return "Yes"
+			}
+			return "No"
+		}(), mr.UpdatedAt)
 	}
 	w.Flush()
 

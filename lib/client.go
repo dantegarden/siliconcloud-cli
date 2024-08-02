@@ -55,10 +55,8 @@ func (c *Client) UserInfo() (*Response[UserInfo], error) {
 }
 
 func (c *Client) Sign(signature string) (*Response[FilesResp], error) {
-	serverUrl := fmt.Sprintf("%s/x/%s/file", c.Domain, meta.APIv1)
-	body, statusCode, err := c.doPost(serverUrl, FileReq{
-		Sign: signature,
-	}, c.authHeader())
+	serverUrl := fmt.Sprintf("%s/x/%s/files/%s", c.Domain, meta.APIv1, signature)
+	body, statusCode, err := c.doGet(serverUrl, nil, c.authHeader())
 	if err != nil {
 		return nil, cli.Exit(err, meta.ServerError)
 	}
@@ -70,7 +68,7 @@ func (c *Client) Sign(signature string) (*Response[FilesResp], error) {
 }
 
 func (c *Client) CommitFile(signature string, objectKey string) (*Response[FilesResp], error) {
-	serverUrl := fmt.Sprintf("%s/x/%s/file/commit", c.Domain, meta.APIv1)
+	serverUrl := fmt.Sprintf("%s/x/%s/files", c.Domain, meta.APIv1)
 	body, statusCode, err := c.doPost(serverUrl, FileCommitReq{
 		Sign:      signature,
 		ObjectKey: objectKey,
@@ -85,12 +83,13 @@ func (c *Client) CommitFile(signature string, objectKey string) (*Response[Files
 	return handleResponse[FilesResp](body)
 }
 
-func (c *Client) CommitModel(modelName string, modelType string, modelFiles []*ModelFile) (*Response[ModelCommitResp], error) {
-	serverUrl := fmt.Sprintf("%s/x/%s/model/commit", c.Domain, meta.APIv1)
+func (c *Client) CommitModel(modelName string, modelType string, overwrite bool, modelFiles []*ModelFile) (*Response[ModelCommitResp], error) {
+	serverUrl := fmt.Sprintf("%s/x/%s/models", c.Domain, meta.APIv1)
 	body, statusCode, err := c.doPost(serverUrl, ModelCommitReq{
-		Name:  modelName,
-		Type:  modelType,
-		Files: modelFiles,
+		Name:      modelName,
+		Type:      modelType,
+		Overwrite: overwrite,
+		Files:     modelFiles,
 	}, c.authHeader())
 	if err != nil {
 		return nil, cli.Exit(err, meta.ServerError)
@@ -119,7 +118,7 @@ func (c *Client) ListModel(modelType string) (*Response[ModelListResp], error) {
 }
 
 func (c *Client) ListModelFiles(modelType string, modelName string, extName string) (*Response[ModelListFilesResp], error) {
-	serverUrl := fmt.Sprintf("%s/x/%s/model/%s/files", c.Domain, meta.APIv1, modelType)
+	serverUrl := fmt.Sprintf("%s/x/%s/models/%s/files", c.Domain, meta.APIv1, modelType)
 	param := ModelListFilesReq{
 		Name:    modelName,
 		ExtName: extName,
@@ -136,8 +135,11 @@ func (c *Client) ListModelFiles(modelType string, modelName string, extName stri
 }
 
 func (c *Client) RemoveModel(modelType string, modelName string) (*Response[ModelDeleteResp], error) {
-	serverUrl := fmt.Sprintf("%s/x/%s/model/%s/%s", c.Domain, meta.APIv1, modelType, modelName)
-	body, statusCode, err := c.doDelete(serverUrl, nil, c.authHeader())
+	serverUrl := fmt.Sprintf("%s/x/%s/models", c.Domain, meta.APIv1)
+	body, statusCode, err := c.doDelete(serverUrl, ModelDeleteReq{
+		Name: modelName,
+		Type: modelType,
+	}, c.authHeader())
 	if err != nil {
 		return nil, cli.Exit(err, meta.ServerError)
 	}
@@ -148,10 +150,11 @@ func (c *Client) RemoveModel(modelType string, modelName string) (*Response[Mode
 	return handleResponse[ModelDeleteResp](body)
 }
 
-func (c *Client) RemoveModelFile(modelType string, modelName string, path string) (*Response[ModelDeleteResp], error) {
-	serverUrl := fmt.Sprintf("%s/x/%s/model/%s/%s/files", c.Domain, meta.APIv1, modelType, modelName)
-	body, statusCode, err := c.doDelete(serverUrl, map[string]string{
-		"path": path,
+func (c *Client) CheckModel(modelType string, modelName string) (*Response[CheckModelResp], error) {
+	serverUrl := fmt.Sprintf("%s/x/%s/models/check", c.Domain, meta.APIv1)
+	body, statusCode, err := c.doGet(serverUrl, ModelQueryReq{
+		Name: modelName,
+		Type: modelType,
 	}, c.authHeader())
 	if err != nil {
 		return nil, cli.Exit(err, meta.ServerError)
@@ -160,7 +163,7 @@ func (c *Client) RemoveModelFile(modelType string, modelName string, path string
 	if statusCode != http.StatusOK {
 		return nil, cli.Exit(handleError(body, statusCode), meta.ServerError)
 	}
-	return handleResponse[ModelDeleteResp](body)
+	return handleResponse[CheckModelResp](body)
 }
 
 func (c *Client) authHeader() map[string]string {
@@ -304,6 +307,9 @@ func handleError(responseBody []byte, statusCode int) error {
 		rawMessage = strings.TrimFunc(rawMessage, func(r rune) bool {
 			return unicode.Is(unicode.Quotation_Mark, r)
 		})
+		if rawMessage == "" {
+			return cli.Exit(meta.NewErrNo("Unknown server error"), meta.ServerError)
+		}
 		return cli.Exit(meta.NewErrNo(rawMessage), meta.ServerError)
 	}
 

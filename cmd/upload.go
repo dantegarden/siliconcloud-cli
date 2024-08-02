@@ -53,6 +53,17 @@ func Upload(c *cli.Context) error {
 
 	client := lib.NewClient(args.BaseDomain, apiKey)
 
+	modelExistResp, err := client.CheckModel(args.Type, args.Name)
+	if err != nil {
+		return err
+	}
+
+	if modelExistResp.Data.Exists {
+		if !args.Overwrite {
+			return cli.Exit(fmt.Sprintf("Model already exists, use --overwrite to overwrite it"), meta.LoadError)
+		}
+	}
+
 	var filesToUpload []*lib.FileToUpload
 
 	if stat.IsDir() {
@@ -167,11 +178,11 @@ func Upload(c *cli.Context) error {
 		}
 	})
 
-	_, err = client.CommitModel(args.Name, args.Type, modelFiles)
+	_, err = client.CommitModel(args.Name, args.Type, args.Overwrite, modelFiles)
 	if err != nil {
 		return err
 	}
-	fmt.Fprintf(os.Stdout, "uploaded successfully\n")
+	fmt.Fprintf(os.Stdout, "Uploaded successfully\n")
 
 	return nil
 }
@@ -198,14 +209,14 @@ func calculateHash(filePath string) (string, error) {
 	// MD5
 	hashMD5 := md5.New()
 	io.Copy(hashMD5, file)
-	mdHex := base64.StdEncoding.EncodeToString(hashMD5.Sum(nil))
+	md5Str := base64.StdEncoding.EncodeToString(hashMD5.Sum(nil))
 
 	// 计算SHA256
 	hasher := sha256.New()
-	hasher.Write([]byte(fmt.Sprintf("%s%d", mdHex, crc1)))
+	hasher.Write([]byte(fmt.Sprintf("%s%d", md5Str, crc1)))
 	hashBytes := hasher.Sum(nil)
 	hashString := hex.EncodeToString(hashBytes)
-	logs.Debugf("file: %s, crc64: %d, md5: %s, sha256: %s", filePath, crc1, mdHex, hashString)
+	logs.Debugf("file: %s, crc64: %d, md5: %s, sha256: %s", filePath, crc1, md5Str, hashString)
 	return hashString, nil
 }
 

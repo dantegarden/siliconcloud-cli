@@ -1,11 +1,12 @@
 package meta
 
 const (
-	ApiKeyInvalid     = "Invalid api key, please check your api key."
-	ModelNotFound     = "The model is not found."
-	NotModelFound     = "No model found."
-	ModelFileNotFound = "The model file is not found."
-	NotLoggedIn       = "Not logged in"
+	ApiKeyInvalid      = "Invalid api key, please check your api key."
+	ModelNotFound      = "The model is not found."
+	NotModelFound      = "No model found."
+	ModelFileNotFound  = "The model file is not found."
+	NotLoggedIn        = "Not logged in"
+	ModelAlreadyExists = "Model already exists."
 )
 
 type ErrNo struct {
@@ -25,4 +26,5 @@ var ServerErrors = map[int32]ErrNo{
 	20224: NewErrNo(ModelNotFound),
 	20225: NewErrNo(ModelFileNotFound),
 	20226: NewErrNo(NotModelFound),
+	20227: NewErrNo(ModelAlreadyExists),
 }

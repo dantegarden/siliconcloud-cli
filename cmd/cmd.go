@@ -18,16 +18,16 @@ func Init() *cli.App {
 	typeFlag := cli.StringFlag{Name: "type", Aliases: []string{"t"}, Usage: fmt.Sprintf("Specify the mode type. (Only works for %s)", meta.ModelTypesStr), Destination: &globalArgs.Type}
 	pathFlag := cli.StringFlag{Name: "path", Aliases: []string{"p"}, Usage: "Specify the path to upload.", Destination: &globalArgs.Path}
 	nameFlag := cli.StringFlag{Name: "name", Aliases: []string{"n"}, Usage: "Specify the name of model.", Destination: &globalArgs.Name}
-	filePathFlag := cli.StringFlag{Name: "path", Usage: "Specify the filepath to remove.", Destination: &globalArgs.FilePath}
 	formatTreeFlag := cli.BoolFlag{Name: "tree", Usage: "Display in file tree format.", Destination: &globalArgs.FormatTree, Required: false}
 	extFlag := cli.StringFlag{Name: "ext", Usage: "Specify the ext name of file.", Destination: &globalArgs.ExtName, Required: false}
+	overwriteFlag := cli.BoolFlag{Name: "overwrite", Usage: "Overwrite existent model", Destination: &globalArgs.Overwrite, Value: false, Required: false}
 
 	app := cli.NewApp()
 	app.Name = meta.Name
 	app.Usage = meta.Description
-	app.Version = meta.Version
+	app.Version = fmt.Sprintf("v%s", meta.Version)
 	cli.VersionPrinter = func(cCtx *cli.Context) {
-		fmt.Printf("Version: %s\nGit Rev: %s\nBuild At: %s\n", cCtx.App.Version, meta.Commit, meta.BuildDate)
+		fmt.Printf("Version: v%s\nRevision: %s\nBuild At: %s\n", cCtx.App.Version, meta.Commit, meta.BuildDate)
 	}
 
 	// global flags
@@ -65,12 +65,13 @@ func Init() *cli.App {
 				&typeFlag,
 				&pathFlag,
 				&nameFlag,
+				&overwriteFlag,
 			},
 			Action: Upload,
 		},
 		{
 			Name:  meta.CmdModel,
-			Usage: "{ls, ls-files, rm, rm-file} Commands to interact with your models.",
+			Usage: "{ls, ls-files, rm} Commands to interact with your models.",
 			Subcommands: []*cli.Command{
 				{
 					Name:  meta.CmdLs,
@@ -99,16 +100,6 @@ func Init() *cli.App {
 						&nameFlag,
 					},
 					Action: RemoveModel,
-				},
-				{
-					Name:  meta.CmdRmFile,
-					Usage: "Remove file in your model",
-					Flags: []cli.Flag{
-						&typeFlag,
-						&nameFlag,
-						&filePathFlag,
-					},
-					Action: RemoveFileModel,
 				},
 			},
 		},
