@@ -5,17 +5,19 @@ type FileReq struct {
 }
 
 type UserInfo struct {
-	Id            string `json:"id" form:"id" query:"id"`
-	Name          string `json:"name" form:"name" query:"name"`
-	Image         string `json:"image" form:"image" query:"image"`
-	Email         string `json:"email" form:"email" query:"email"`
-	IsAdmin       bool   `json:"isAdmin" form:"isAdmin" query:"isAdmin"`
-	Balance       string `json:"balance" form:"balance" query:"balance"`
-	Status        string `json:"status" form:"status" query:"status"`
-	Introduction  string `json:"introduction" form:"introduction" query:"introduction"`
-	Role          string `json:"role" form:"role" query:"role"`
-	ChargeBalance string `json:"chargeBalance" form:"chargeBalance" query:"chargeBalance"`
-	TotalBalance  string `json:"totalBalance" form:"totalBalance" query:"totalBalance"`
+	Id               string `json:"id" form:"id" query:"id"`
+	Name             string `json:"name" form:"name" query:"name"`
+	Image            string `json:"image" form:"image" query:"image"`
+	Email            string `json:"email" form:"email" query:"email"`
+	IsAdmin          bool   `json:"isAdmin" form:"isAdmin" query:"isAdmin"`
+	Balance          string `json:"balance" form:"balance" query:"balance"`
+	Status           string `json:"status" form:"status" query:"status"`
+	Introduction     string `json:"introduction" form:"introduction" query:"introduction"`
+	Role             string `json:"role" form:"role" query:"role"`
+	ChargeBalance    string `json:"chargeBalance" form:"chargeBalance" query:"chargeBalance"`
+	TotalBalance     string `json:"totalBalance" form:"totalBalance" query:"totalBalance"`
+	Category         string `json:"category" form:"category" query:"category"`
+	CurrentMonthCost string `json:"currentMonthCost" form:"currentMonthCost" query:"currentMonthCost"`
 }
 
 type FilesResp struct {

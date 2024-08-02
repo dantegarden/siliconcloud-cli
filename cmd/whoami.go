@@ -28,7 +28,11 @@ func Whoami(c *cli.Context) error {
 		return err
 	}
 
-	fmt.Fprintf(os.Stdout, "your account name: %s\n", info.Data.Email)
+	if info.Data.Name != "" {
+		fmt.Fprintf(os.Stdout, "Your account name: %s\n", info.Data.Name)
+	} else {
+		fmt.Fprintf(os.Stdout, "Your account email: %s\n", info.Data.Email)
+	}
 
 	return nil
 }

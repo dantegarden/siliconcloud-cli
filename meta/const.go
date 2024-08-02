@@ -29,15 +29,15 @@ const (
 type UploadFileType string
 
 const (
-	TypeCheckpoint   UploadFileType = "checkpoint"
-	TypeVae          UploadFileType = "vae"
-	TypeLora         UploadFileType = "lora"
-	TypeControlNet   UploadFileType = "controlnet"
-	TypeEmbedding    UploadFileType = "embedding"
-	TypeHyperNetwork UploadFileType = "hypernetwork"
-	TypeClip         UploadFileType = "clip"
-	TypeUpscale      UploadFileType = "upscale"
-	TypeLLM          UploadFileType = "llm"
+	TypeCheckpoint   UploadFileType = "bizyair/checkpoint"
+	TypeVae          UploadFileType = "bizyair/vae"
+	TypeLora         UploadFileType = "bizyair/lora"
+	TypeControlNet   UploadFileType = "bizyair/controlnet"
+	TypeEmbedding    UploadFileType = "bizyair/embedding"
+	TypeHyperNetwork UploadFileType = "bizyair/hypernetwork"
+	TypeClip         UploadFileType = "bizyair/clip"
+	TypeClipVision   UploadFileType = "bizyair/clip_vision"
+	TypeUpscale      UploadFileType = "bizyair/upscale"
 )
 
 var ModelTypes = []UploadFileType{
@@ -48,8 +48,8 @@ var ModelTypes = []UploadFileType{
 	TypeEmbedding,
 	TypeHyperNetwork,
 	TypeClip,
+	TypeClipVision,
 	TypeUpscale,
-	TypeLLM,
 }
 
 var ModelTypesStr = func(arr []UploadFileType) string {
