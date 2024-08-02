@@ -77,6 +77,7 @@ const (
 	OSWindows               = "windows"
 	EnvUserProfile          = "USERPROFILE"
 	EnvHome                 = "HOME"
+	EnvAPIKey               = "SF_API_KEY"
 	OSSObjectKey            = "https://%s.%s.aliyuncs.com/%s"
 	OKCode                  = 20000
 )

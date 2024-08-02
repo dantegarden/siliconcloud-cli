@@ -18,9 +18,9 @@ Binaries for Linux, Windows and Mac are available as tarballs in the [release pa
 
 - Linux
   ```shell
-    VERSION=0.0.1
+    VERSION=0.1.0
     tar -xzvf siliconcloud-cli-linux-$VERSION-amd64.tar.gz
-    install siliconcloud-cli /usr/local/bin
+    install siliconcloud /usr/local/bin
   ```
 
 * Via a GO install
@@ -50,9 +50,10 @@ In order to build it from source you must:
 The Silicon Cloud CLI uses api-keys to authenticate client. To login your machine, run the following CLI:
 
 ```bash
+# if you have an environment variable SF_API_KEY set with your api key
 siliconcloud login
-# or using an environment variable
-siliconcloud login -k $API_KEY
+# or using an option --key,-k
+siliconcloud login -k $SF_API_KEY
 ```
 
 ### Logout
@@ -66,8 +67,15 @@ siliconcloud logout
 To upload files to the silicon cloud, run the following CLI:
 
 ```bash
-siliconcloud upload -n mymodel -t checkpoint -p /local/path/directory-or-file
+siliconcloud upload -n mymodel -t bizyair/checkpoint -p /local/path/directory-or-file
 ```
+
+You can specify overwrite flag to overwrite the model if it already exists in the silicon cloud.
+
+```bash
+siliconcloud upload -n mymodel -t bizyair/checkpoint -p /local/path/directory-or-file --overwrite
+```
+
 
 You can specify model name, model type and path to upload by using the `-n`, `-t` and `-p` flags respectively.
 
@@ -75,7 +83,7 @@ You can specify model name, model type and path to upload by using the `-n`, `-t
 To view all your models in the silicon cloud, run the following CLI:
 
 ```bash
-siliconcloud model ls -t checkpoint
+siliconcloud model ls -t bizyair/checkpoint
 ```
 
 You must specify model type by using the `-t` flag.
@@ -84,24 +92,15 @@ You must specify model type by using the `-t` flag.
 To view all files in a model, run the following CLI:
 
 ```bash
-siliconcloud model ls-files -n mymodel -t checkpoint
+siliconcloud model ls-files -n mymodel -t bizyair/checkpoint
 ```
 
 If you want to see the files in a model in tree view, run the following CLI:
 ```bash
-siliconcloud model ls-files -n mymodel -t checkpoint --tree
+siliconcloud model ls-files -n mymodel -t bizyair/checkpoint --tree
 ```
 
 You must specify model name and model type by using the `-n` and `-t` flags respectively.
-
-### Remove File
-To remove file from a model, run the following CLI:
-
-```bash
-siliconcloud model rm-file -n mymodel -t checkpoint -f file_name
-```
-
-You must specify model name, model type and file name by using the `-n`, `-t` and `-f` flags respectively.
 
 ### Remove Model
 To remove model from the silicon cloud, run the following CLI:
