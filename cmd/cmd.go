@@ -27,7 +27,7 @@ func Init() *cli.App {
 	app.Usage = meta.Description
 	app.Version = fmt.Sprintf("v%s", meta.Version)
 	cli.VersionPrinter = func(cCtx *cli.Context) {
-		fmt.Printf("Version: v%s\nRevision: %s\nBuild At: %s\n", cCtx.App.Version, meta.Commit, meta.BuildDate)
+		fmt.Printf("Version: %s\nRevision: %s\nBuild At: %s\n", cCtx.App.Version, meta.Commit, meta.BuildDate)
 	}
 
 	// global flags

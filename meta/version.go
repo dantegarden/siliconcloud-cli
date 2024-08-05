@@ -7,7 +7,7 @@ const (
 
 var (
 	// Version This variable is replaced in compile time. `-ldflags "-X 'github.com/siliconflow/siliconcloud-cli/meta.Version=${VERSION}'"`
-	Version = "v0.0.1"
+	Version = "0.0.1"
 	// Commit This variable is replaced in compile time. `-ldflags "-X 'github.com/siliconflow/siliconcloud-cli/meta.Commit=${GIT_REV}'"`
 	Commit = "latest"
 	// BuildDate This variable is replaced in compile time. `-ldflags "-X 'github.com/siliconflow/siliconcloud-cli/meta.BuildDate=${BUILD_DATE}'"`
