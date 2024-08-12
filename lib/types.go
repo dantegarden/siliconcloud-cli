@@ -32,7 +32,7 @@ type FileInfo struct {
 	AccessKeySecret string `json:"access_key_secret,omitempty" form:"access_key_secret" query:"access_key_secret"`
 	Expiration      string `json:"expiration,omitempty" form:"expiration" query:"expiration"`
 	SecurityToken   string `json:"security_token,omitempty" form:"security_token" query:"security_token"`
-	Id              string `json:"id,omitempty" form:"id" query:"id"`
+	Id              int64  `json:"id,omitempty" form:"id" query:"id"`
 }
 
 type StorageInfo struct {
@@ -54,8 +54,8 @@ type ModelCommitReq struct {
 }
 
 type ModelFile struct {
-	FileId string `json:"file_id,omitempty" form:"file_id" query:"file_id"`
-	Path   string `json:"path,omitempty" form:"path" query:"path"`
+	Sign string `json:"sign,,omitempty" form:"sign" query:"sign"`
+	Path string `json:"path,omitempty" form:"path" query:"path"`
 }
 
 type ModelFileInfo struct {
@@ -63,6 +63,7 @@ type ModelFileInfo struct {
 	LabelPath string `json:"label_path,omitempty" form:"label_path" query:"label_path"`
 	RealPath  string `json:"real_path,omitempty" form:"real_path" query:"real_path"`
 	Available bool   `json:"available,omitempty" form:"available" query:"available"`
+	Sign      string `json:"sign,omitempty" form:"sign" query:"sign"`
 }
 
 type ModelCommitResp struct {

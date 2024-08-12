@@ -141,7 +141,7 @@ func Upload(c *cli.Context) error {
 		fileIndex := fmt.Sprintf("%d/%d", i+1, total)
 
 		fileRecord := sign.Data.File
-		if len(fileRecord.Id) < 1 {
+		if fileRecord.Id == 0 {
 			// upload file
 			fileStorage := sign.Data.Storage
 			ossClient, err := lib.NewAliOssStorageClient(fileStorage.Endpoint, fileStorage.Bucket, fileRecord.AccessKeyId, fileRecord.AccessKeySecret, fileRecord.SecurityToken)
@@ -173,8 +173,8 @@ func Upload(c *cli.Context) error {
 	// commit model
 	modelFiles := lo.Map[*lib.FileToUpload, *lib.ModelFile](filesToUpload, func(file *lib.FileToUpload, _ int) *lib.ModelFile {
 		return &lib.ModelFile{
-			FileId: file.Id,
-			Path:   file.RelPath,
+			Sign: file.Signature,
+			Path: file.RelPath,
 		}
 	})
 

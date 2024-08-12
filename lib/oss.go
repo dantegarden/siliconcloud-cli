@@ -48,7 +48,7 @@ func (c *AliOssStorageCred) GetSecurityToken() string {
 }
 
 type FileToUpload struct {
-	Id        string
+	Id        int64
 	Path      string
 	RelPath   string
 	Size      int64
