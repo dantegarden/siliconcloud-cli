@@ -33,6 +33,13 @@ func (s *SfFolder) SaveKey(apikey string) error {
 		return cli.Exit(err, meta.LoadError)
 	}
 
+	if runtime.GOOS != meta.OSWindows {
+		err = os.Chmod(s.folderPath(""), 0770)
+		if err != nil {
+			return cli.Exit(fmt.Errorf("failed to set directory permissions: %w", err), meta.LoadError)
+		}
+	}
+
 	keyFilePath := s.folderPath(meta.SfApiKey)
 	file, err := os.OpenFile(keyFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
